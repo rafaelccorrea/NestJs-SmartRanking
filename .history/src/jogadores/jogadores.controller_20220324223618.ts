@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { JogadoresService } from './jogadores.service';
-import { Jogador } from './interfaces/jogador.interface';
+import { Jogador } from './../../dist/jogadores/interfaces/jogador.interface.d';
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
