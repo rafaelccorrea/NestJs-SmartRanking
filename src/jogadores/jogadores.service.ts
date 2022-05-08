@@ -6,8 +6,26 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class JogadoresService {
   private jogadores: Jogador[] = [];
-  private readonly logger = new Logger(JogadoresService.name);
+  private criar(criarJogadorDto: CriarJogadorDto): void {
+    const { nome, telefoneCelular, email } = criarJogadorDto;
 
+    const jogador: Jogador = {
+      _id: uuidv4(),
+      nome,
+      telefoneCelular,
+      email,
+      ranking: 'A',
+      posicaoRanking: 1,
+      urlFotoJogador: 'www.google.com.br/foto123.jpg',
+    };
+    // Console.log =>  this.logger.log(`criaJogadorDto: ${JSON.stringify(jogador)}}`);
+
+    this.jogadores.push(jogador);
+  }
+  private atualizar(jogador: Jogador, criarJogadorDto: CriarJogadorDto): void {
+    const { nome } = criarJogadorDto;
+    jogador.nome = nome;
+  }
   async atualizarCriarJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
     const { email } = criarJogadorDto;
 
@@ -27,7 +45,7 @@ export class JogadoresService {
   }
 
   async consultarJogadoresEmail(email: string): Promise<Jogador> {
-    const existsJogador = this.jogadores.find(
+    const existsJogador = await this.jogadores.find(
       (jogador) => jogador.email === email,
     );
 
@@ -37,25 +55,13 @@ export class JogadoresService {
     return existsJogador;
   }
 
-  private atualizar(jogador: Jogador, criarJogadorDto: CriarJogadorDto): void {
-    const { nome } = criarJogadorDto;
-    jogador.nome = nome;
-  }
+  async deletarJogador(email: string): Promise<void> {
+    const existsJogador = await this.jogadores.find(
+      (jogador) => jogador.email === email,
+    );
 
-  private criar(criarJogadorDto: CriarJogadorDto): void {
-    const { nome, telefoneCelular, email } = criarJogadorDto;
-
-    const jogador: Jogador = {
-      _id: uuidv4(),
-      nome,
-      telefoneCelular,
-      email,
-      ranking: 'A',
-      posicaoRanking: 1,
-      urlFotoJogador: 'www.google.com.br/foto123.jpg',
-    };
-    // Console.log =>  this.logger.log(`criaJogadorDto: ${JSON.stringify(jogador)}}`);
-
-    this.jogadores.push(jogador);
+    this.jogadores = this.jogadores.filter(
+      (jogador) => jogador.email !== existsJogador.email,
+    );
   }
 }
