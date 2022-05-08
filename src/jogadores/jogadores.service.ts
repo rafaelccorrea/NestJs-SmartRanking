@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,21 +9,32 @@ export class JogadoresService {
   private readonly logger = new Logger(JogadoresService.name);
 
   async atualizarCriarJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
+    const { email } = criarJogadorDto;
 
-    const { email } = criarJogadorDto
+    const existsJogador = await this.jogadores.find(
+      (res) => res.email === email,
+    );
 
-    const existsJogador = await this.jogadores.find(res => res.email === email)
-
-    if(existsJogador){
-      return this.atualizar(existsJogador, criarJogadorDto)
-    }else{
+    if (existsJogador) {
+      return this.atualizar(existsJogador, criarJogadorDto);
+    } else {
       this.criar(criarJogadorDto);
     }
-
   }
 
   async buscaJogadores(): Promise<Jogador[]> {
     return await this.jogadores;
+  }
+
+  async consultarJogadoresEmail(email: string): Promise<Jogador> {
+    const existsJogador = this.jogadores.find(
+      (jogador) => jogador.email === email,
+    );
+
+    if (!existsJogador) {
+      throw new NotFoundException(`O email ${email} não foi encontrado!`);
+    }
+    return existsJogador;
   }
 
   private atualizar(jogador: Jogador, criarJogadorDto: CriarJogadorDto): void {
