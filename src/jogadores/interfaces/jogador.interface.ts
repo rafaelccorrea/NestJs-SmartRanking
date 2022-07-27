@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export interface Jogador {
   readonly _id: string;
   readonly telefoneCelular: string;

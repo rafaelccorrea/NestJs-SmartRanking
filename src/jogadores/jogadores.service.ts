@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
@@ -18,7 +19,6 @@ export class JogadoresService {
       posicaoRanking: 1,
       urlFotoJogador: 'www.google.com.br/foto123.jpg',
     };
-    // Console.log =>  this.logger.log(`criaJogadorDto: ${JSON.stringify(jogador)}}`);
 
     this.jogadores.push(jogador);
   }
@@ -54,12 +54,6 @@ export class JogadoresService {
   }
 
   async deletarJogador(email: string): Promise<void> {
-    const existsJogador = this.jogadores.find(
-      (jogador) => jogador.email === email,
-    );
-
-    this.jogadores = this.jogadores.filter(
-      (jogador) => jogador.email !== existsJogador.email,
-    );
+    return await this.jogadores.remove({email}).exec()
   }
 }
