@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common'
 import { CriarJogadorDto } from './dtos/criar-jogador.dto'
 import { JogadoresService } from './jogadores.service'
 import { Jogador } from './interfaces/jogador.interface'
@@ -10,25 +10,34 @@ export class JogadoresController {
   constructor(private readonly JogadoresService: JogadoresService) {}
 
   @Post()
-  async atualizarCriarJogador(@Body() criarJogadorDto: CriarJogadorDto) {
-    await this.JogadoresService.atualizarCriarJogador(criarJogadorDto);
+  @UsePipes(ValidationPipe)
+  async criar(@Body() criarJogadorDto: CriarJogadorDto) {
+    await this.JogadoresService.criarJogador(criarJogadorDto);
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  async atualizar(
+    @Body() criarJogadorDto: CriarJogadorDto,
+    @Param('id', JogadoresValidacao) id: string): Promise<void>{
+    await this.JogadoresService.atualizarJogador(id, criarJogadorDto);
   }
 
   @Get()
-  async buscaJogadores(
-    @Query('email', JogadoresValidacao) email: string,
-  ): Promise<Jogador[] | Jogador> {
-    if (email) {
-      return await this.JogadoresService.consultarJogadoresEmail(email);
-    } else {
-      return await this.JogadoresService.buscaJogadores();
-    }
+  async buscaJogadores(): Promise<Jogador[]> {
+      return await this.JogadoresService.buscaJogadores()
   }
 
-  @Delete()
+  @Get('/:id')
+  async buscaJogadorId(
+    @Param('id', JogadoresValidacao) id: string): Promise<Jogador> {
+      return await this.JogadoresService.consultarJogadorId(id)
+  }
+
+  @Delete('/:id')
   async deletarJogadores(
-    @Query('email', JogadoresValidacao) email: string,
+    @Param('id', JogadoresValidacao) id: string,
   ): Promise<void> {
-    this.JogadoresService.deletarJogador(email);
+    this.JogadoresService.deletarJogador(id);
   }
 }
