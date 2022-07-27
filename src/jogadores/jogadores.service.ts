@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
+import { atualizarJogadorDto } from './dtos/atualizar-jogador-dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { BadRequestException } from '@nestjs/common';
 import { Model } from 'mongoose'
@@ -24,7 +25,7 @@ export class JogadoresService {
     return await jogadorCriado.save()
   }
 
-  async atualizarJogador(id: string, criarJogadorDto: CriarJogadorDto): Promise<void> {
+  async atualizarJogador(id: string, atualizarJogadorDto: atualizarJogadorDto): Promise<void> {
 
     const existsJogador = await this.jogadorModel.findOne({id}).exec();
 
@@ -32,7 +33,7 @@ export class JogadoresService {
       throw new NotFoundException(`Este Jogador não foi encontrado!`)
     }
 
-    await this.jogadorModel.findOneAndUpdate({id}, {$set: criarJogadorDto}).exec()
+    await this.jogadorModel.findOneAndUpdate({id}, {$set: atualizarJogadorDto}).exec()
   }
 
   async buscaJogadores(): Promise<Jogador[]> {
